@@ -8,6 +8,8 @@ import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 contract FairLaunchpad is Ownable {
     using SafeMath for uint256;
 
+    bool public started;
+
     uint256 public investmentAmount;
     uint256 public rewardAmount;
 
@@ -28,24 +30,40 @@ contract FairLaunchpad is Ownable {
         uint256 _investmentAmount,
         uint256 _rewardAmount,
         uint256 _maxInvestors,
-        uint256 _durationBlocks,
         IERC20 _projectToken
     ) {
         investmentAmount = _investmentAmount;
         rewardAmount = _rewardAmount;
         maxInvestors = _maxInvestors;
-        endBlock = block.number + _durationBlocks;
         winnersChosen = false;
         projectRedeemed = false;
         projectToken = _projectToken;
 
+        started = false;
+    }
+
+    modifier postStarted() {
+        require(started, "Launchpad not initialized");
+        _;
+    }
+
+    modifier postWinnersChosen() {
+        require(winnersChosen, "Winners not chosen yet");
+        _;
+    }
+
+    function start(uint256 _durationBlocks) external onlyOwner {
+        require(!started, "Already started");
+        started = true;
+        endBlock = block.number + _durationBlocks;
         require(
-            projectToken.transfer(address(this), rewardAmount.mul(maxInvestors)),
+            projectToken.transferFrom(msg.sender, address(this), rewardAmount.mul(maxInvestors)),
             "Token transfer failed"
         );
     }
 
-    function join() external payable {
+
+    function join() external payable postStarted {
         require(block.number < endBlock, "Investment round is over");
         require(msg.value == investmentAmount, "Invalid investment amount");
         require(!invested[msg.sender], "Already joined");
@@ -54,7 +72,7 @@ contract FairLaunchpad is Ownable {
         candidates.push(msg.sender);
     }
 
-    function chooseWinners() external {
+    function chooseWinners() external postStarted {
         require(block.number >= endBlock + 100, "Too early to choose winners");
         require(!winnersChosen, "Winners already chosen");
         require(candidates.length > 0, "No candidates to choose from");
@@ -76,8 +94,7 @@ contract FairLaunchpad is Ownable {
         }
     }
 
-    function redeem() external {
-        require(winnersChosen, "Redeeming not possible before choosing winners");
+    function redeem() external postWinnersChosen {
         require(invested[msg.sender], "No investments made or already redeemed");
 
         invested[msg.sender] = false;
@@ -89,7 +106,7 @@ contract FairLaunchpad is Ownable {
         }
     }
 
-    function projectRedeem() external onlyOwner {
+    function projectRedeem() external onlyOwner postWinnersChosen {
         require(winnersChosen, "Redeeming not possible before choosing winners");
         require(!projectRedeemed, "Already redeemed");
 
