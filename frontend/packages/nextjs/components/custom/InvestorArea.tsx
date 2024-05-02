@@ -221,14 +221,16 @@ export function InvestorArea(params: {
       ) : (
         <div className="grid">
           <p className="my-2 font-extrabold" style={{ justifySelf: "center" }}>
-            Participation
+            PARTICIPATION
           </p>
           <div>
-            <p style={{ marginBottom: "0px" }}>Participants: {params.participants.toString()}</p>
+            <p className="my-2 font-bold" style={{ marginBottom: "0px" }}>
+              Participants: {params.participants.toString()}
+            </p>
           </div>
           {tokenBalance > 0 && (
             <div>
-              <p style={{ marginBottom: "0px" }}>
+              <p className="my-2 font-bold" style={{ marginBottom: "0px" }}>
                 User Balance: {formatEther(tokenBalance)} {params.tokenSymbol}
               </p>
             </div>
@@ -261,7 +263,9 @@ export function InvestorArea(params: {
             )}
             {status.length > 0 && (
               <div>
-                <p style={{ marginBottom: "0px" }}>{status}</p>
+                <p className="my-2 font-bold" style={{ marginBottom: "0px" }}>
+                  {status}
+                </p>
               </div>
             )}
             {params.winnersChosen && isChosen && isInvestor && (

@@ -32,7 +32,7 @@ export function LaunchpadInfo(params: {
             INFO
           </p>
           <div>
-            <p style={{ marginBottom: "0px" }}>
+            <p className="my-2 font-bold" style={{ marginBottom: "0px" }}>
               Status:{" "}
               {params.launchpadOpen && !params.winnersChosen
                 ? "Active"
@@ -40,10 +40,12 @@ export function LaunchpadInfo(params: {
                 ? "Closed"
                 : "Inactive"}
             </p>
-            <p style={{ marginBottom: "0px" }}>
+            <p className="my-2 font-bold" style={{ marginBottom: "0px" }}>
               Token: {params.tokenName}({params.tokenSymbol})
             </p>
-            <p style={{ marginBottom: "0px" }}>Max number investors: {(maxInvestors as bigint).toString()}</p>
+            <p className="my-2 font-bold" style={{ marginBottom: "0px" }}>
+              Max number investors: {(maxInvestors as bigint).toString()}
+            </p>
           </div>
         </div>
       )}

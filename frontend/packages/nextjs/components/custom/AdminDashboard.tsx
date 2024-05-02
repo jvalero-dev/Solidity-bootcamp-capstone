@@ -134,7 +134,7 @@ export function AdminDashboard(params: {
       ) : (
         <div className="grid">
           <p className="my-2 font-extrabold" style={{ justifySelf: "center" }}>
-            Launchpad Admin
+            ADMIN
           </p>
 
           {params.launchpadOpen && (
@@ -145,7 +145,9 @@ export function AdminDashboard(params: {
 
           {status.length > 0 && (
             <div>
-              <p style={{ marginBottom: "0px" }}>{status}</p>
+              <p className="my-2 font-bold" style={{ marginBottom: "0px" }}>
+                {status}
+              </p>
             </div>
           )}
 
