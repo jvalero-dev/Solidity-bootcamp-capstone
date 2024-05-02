@@ -93,7 +93,7 @@ contract FairLaunchpad is Ownable {
 	}
 
 	function chooseWinners() external postStarted {
-		require(block.number >= endBlock + 100, "Too early to choose winners");
+		require(block.number >= endBlock, "Too early to choose winners");
 		require(!winnersChosen, "Winners already chosen");
 		require(candidates.length > 0, "No candidates to choose from");
 
