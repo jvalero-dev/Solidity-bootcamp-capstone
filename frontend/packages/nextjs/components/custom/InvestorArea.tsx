@@ -2,6 +2,7 @@
 
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { abi } from "../../../hardhat/artifacts/contracts/FairLaunchpad.sol/FairLaunchpad.json";
+import { abi as TokenAbi } from "../../../hardhat/artifacts/contracts/MyToken.sol/MyToken.json";
 import { waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { formatEther } from "viem";
 import { useReadContract, useWatchContractEvent } from "wagmi";
@@ -20,6 +21,7 @@ export function InvestorArea(params: {
   const [buttonLaunchDistLoading, setButtonLaunchDistLoading] = useState(false);
   const [buttonClaimTokensLoading, setButonClaimTokensLoading] = useState(false);
   const [status, setStatus] = useState("");
+  const [tokenBalance, setTokenBalance] = useState(BigInt(0));
   const [isInvestor, setIsInvestor] = useState(false);
   const [isChosen, setIsChosen] = useState(false);
   const [eventInvestedHash, setEventInvestedHash] = useState("");
@@ -35,13 +37,15 @@ export function InvestorArea(params: {
   });
 
   const {
-    data: maxInvestors,
-    isError: isErrorMaxInv,
-    isLoading: isLoadingMaxInv,
+    data: tokbalance,
+    isError: isErrorBalance,
+    isLoading: isLoadingBalance,
+    refetch: refetchTokenBalance,
   } = useReadContract({
-    address: process.env.NEXT_PUBLIC_FAIR_LAUNCHPAD_CONTRACT as `0x${string}`,
-    abi,
-    functionName: "maxInvestors",
+    address: process.env.NEXT_PUBLIC_TOKEN_CONTRACT as `0x${string}`,
+    abi: TokenAbi,
+    functionName: "balanceOf",
+    args: [params.address],
   });
 
   const {
@@ -87,7 +91,7 @@ export function InvestorArea(params: {
     onLogs(logs: any) {
       console.log("Investor tokens claimed!", logs[0]);
       if ((logs[0].args.investor as `0x${string}`) == params.address) {
-        setStatus(`${logs[0].args.amount} Tokens claimed`);
+        setStatus(`${formatEther(logs[0].args.amount)} Tokens claimed`);
         setEventInvestedHash(logs[0].blockHash);
       }
     },
@@ -100,7 +104,7 @@ export function InvestorArea(params: {
     onLogs(logs: any) {
       console.log("Investor recovered investment!", logs[0]);
       if ((logs[0].args.investor as `0x${string}`) == params.address) {
-        setStatus(`${logs[0].args.investmentAmount} ETH returned to user`);
+        setStatus(`${formatEther(logs[0].args.investmentAmount)} ETH returned to user`);
         setEventInvestedHash(logs[0].blockHash);
       }
     },
@@ -184,6 +188,9 @@ export function InvestorArea(params: {
     refetchIsInvestor().then(({ data: isInvested }) => {
       setIsInvestor(isInvested as boolean);
     });
+    refetchTokenBalance().then(({ data: balance }) => {
+      setTokenBalance(balance as bigint);
+    });
   }, [params.address, eventInvestedHash]);
 
   useEffect(() => {
@@ -198,9 +205,9 @@ export function InvestorArea(params: {
 
   return (
     <>
-      {isLoadingInvAmount || isLoadingMaxInv || isLoadingInvested ? (
+      {isLoadingInvAmount || isLoadingInvested || isLoadingBalance ? (
         <div>Loading...</div>
-      ) : isErrorInvAmount || isErrorMaxInv || isErrorInvested ? (
+      ) : isErrorInvAmount || isErrorInvested || isErrorBalance ? (
         <div>Error fetching Investor data</div>
       ) : (
         <div className="grid">
@@ -208,9 +215,7 @@ export function InvestorArea(params: {
             Participation
           </p>
           <div>
-            <p style={{ marginBottom: "0px" }}>
-              Participants: {params.participants.toString()} / {(maxInvestors as bigint).toString()}
-            </p>
+            <p style={{ marginBottom: "0px" }}>Participants: {params.participants.toString()}</p>
           </div>
           <div>
             <p style={{ marginBottom: "0px" }}>
@@ -269,6 +274,13 @@ export function InvestorArea(params: {
                   <span className="loading loading-spinner loading-xs"></span>
                 )}
               </button>
+            )}
+            {tokenBalance > 0 && (
+              <div>
+                <p style={{ marginBottom: "0px" }}>
+                  Balance: {formatEther(tokenBalance)} {params.tokenSymbol}
+                </p>
+              </div>
             )}
           </div>
         </div>
