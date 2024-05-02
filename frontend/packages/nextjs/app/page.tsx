@@ -156,6 +156,7 @@ const Home: NextPage = () => {
                 tokenName={tokenName}
                 tokenSymbol={tokenSymbol}
                 launchpadOpen={launchpadOpen}
+                winnersChosen={winnersChosen}
               />
             </div>
           </div>

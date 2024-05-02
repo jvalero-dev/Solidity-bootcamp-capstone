@@ -68,7 +68,6 @@ export function InvestorArea(params: {
     args: [params.address],
   });
 
-
   useWatchContractEvent({
     address: process.env.NEXT_PUBLIC_FAIR_LAUNCHPAD_CONTRACT,
     abi,
@@ -88,7 +87,20 @@ export function InvestorArea(params: {
     onLogs(logs: any) {
       console.log("Investor tokens claimed!", logs[0]);
       if ((logs[0].args.investor as `0x${string}`) == params.address) {
-        setStatus("Tokens claimed!");
+        setStatus(`${logs[0].args.amount} Tokens claimed`);
+        setEventInvestedHash(logs[0].blockHash);
+      }
+    },
+  });
+
+  useWatchContractEvent({
+    address: process.env.NEXT_PUBLIC_FAIR_LAUNCHPAD_CONTRACT,
+    abi,
+    eventName: "InvestorRecoveredInvestment",
+    onLogs(logs: any) {
+      console.log("Investor recovered investment!", logs[0]);
+      if ((logs[0].args.investor as `0x${string}`) == params.address) {
+        setStatus(`${logs[0].args.investmentAmount} ETH returned to user`);
         setEventInvestedHash(logs[0].blockHash);
       }
     },
@@ -136,6 +148,8 @@ export function InvestorArea(params: {
         confirmations: 1,
         hash: txHash,
       });
+
+      setStatus("Distribution completed!");
     } catch (error) {
       console.log(error);
     } finally {
@@ -191,7 +205,7 @@ export function InvestorArea(params: {
       ) : (
         <div className="grid">
           <p className="my-2 font-extrabold" style={{ justifySelf: "center" }}>
-            Onboarding
+            Participation
           </p>
           <div>
             <p style={{ marginBottom: "0px" }}>
@@ -238,6 +252,19 @@ export function InvestorArea(params: {
               >
                 {!buttonClaimTokensLoading ? (
                   <span>Claim Tokens</span>
+                ) : (
+                  <span className="loading loading-spinner loading-xs"></span>
+                )}
+              </button>
+            )}
+            {params.winnersChosen && !isChosen && isInvestor && (
+              <button
+                className="btn btn-active btn-neutral"
+                style={{ marginTop: "20px" }}
+                onClick={handleClaimTokensClick}
+              >
+                {!buttonClaimTokensLoading ? (
+                  <span>Return stake</span>
                 ) : (
                   <span className="loading loading-spinner loading-xs"></span>
                 )}

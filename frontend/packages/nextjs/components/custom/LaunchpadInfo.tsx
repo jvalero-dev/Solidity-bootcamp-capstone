@@ -5,6 +5,7 @@ export function LaunchpadInfo(params: {
   tokenName: string;
   tokenSymbol: string;
   launchpadOpen: boolean;
+  winnersChosen: boolean;
 }) {
   return (
     <div className="grid">
@@ -12,7 +13,14 @@ export function LaunchpadInfo(params: {
         INFO
       </p>
       <div>
-        <p style={{ marginBottom: "0px" }}>Status: {params.launchpadOpen ? "Active" : "Inactive"}</p>
+        <p style={{ marginBottom: "0px" }}>
+          Status:{" "}
+          {params.launchpadOpen && !params.winnersChosen
+            ? "Active"
+            : params.launchpadOpen && params.winnersChosen
+            ? "Closed"
+            : "Inactive"}
+        </p>
         <p style={{ marginBottom: "0px" }}>
           Token: {params.tokenName}({params.tokenSymbol})
         </p>
