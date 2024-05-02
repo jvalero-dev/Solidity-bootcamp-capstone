@@ -226,6 +226,13 @@ export function InvestorArea(params: {
           <div>
             <p style={{ marginBottom: "0px" }}>Participants: {params.participants.toString()}</p>
           </div>
+          {tokenBalance > 0 && (
+            <div>
+              <p style={{ marginBottom: "0px" }}>
+                User Balance: {formatEther(tokenBalance)} {params.tokenSymbol}
+              </p>
+            </div>
+          )}
           <div>
             <p style={{ marginBottom: "0px" }}>
               Stake {formatEther(investmentAmount as bigint)} ETH to join the launchpad.
@@ -239,16 +246,10 @@ export function InvestorArea(params: {
               {!buttonLoading ? <span>Participate</span> : <span className="loading loading-spinner loading-xs"></span>}
             </button>
 
-            {status.length > 0 && (
-              <div>
-                <p style={{ marginBottom: "0px" }}>{status}</p>
-              </div>
-            )}
-
             {params.participants > 0 && !params.winnersChosen && isInvestor && (
               <button
                 className="btn btn-active btn-neutral"
-                style={{ marginTop: "20px" }}
+                style={{ marginTop: "20px", marginLeft: "15px" }}
                 onClick={handleWinnersPickClick}
               >
                 {!buttonLaunchDistLoading ? (
@@ -257,6 +258,11 @@ export function InvestorArea(params: {
                   <span className="loading loading-spinner loading-xs"></span>
                 )}
               </button>
+            )}
+            {status.length > 0 && (
+              <div>
+                <p style={{ marginBottom: "0px" }}>{status}</p>
+              </div>
             )}
             {params.winnersChosen && isChosen && isInvestor && (
               <button
@@ -283,13 +289,6 @@ export function InvestorArea(params: {
                   <span className="loading loading-spinner loading-xs"></span>
                 )}
               </button>
-            )}
-            {tokenBalance > 0 && (
-              <div>
-                <p style={{ marginBottom: "0px" }}>
-                  Balance: {formatEther(tokenBalance)} {params.tokenSymbol}
-                </p>
-              </div>
             )}
           </div>
         </div>

@@ -115,14 +115,12 @@ const Home: NextPage = () => {
   };
 
   useEffect(() => {
-    console.log("refetching isOpen...");
     refetch().then(({ data: isOpen }) => {
       setLaunchpadOpen(isOpen as boolean);
     });
   }, [connectedAddress, eventHash]);
 
   useEffect(() => {
-    //console.log("refetching isOpen...");
     fetchParticipants().then(({ data: participantsCounter }) => {
       setParticipants(participantsCounter as bigint);
     });
