@@ -41,6 +41,76 @@ const deployedContracts = {
             {
               indexed: true,
               internalType: "address",
+              name: "investor",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "amount",
+              type: "uint256",
+            },
+          ],
+          name: "InvestorClaimedTokens",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "investor",
+              type: "address",
+            },
+          ],
+          name: "InvestorJoined",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "investor",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "investmentAmount",
+              type: "uint256",
+            },
+          ],
+          name: "InvestorRecoveredInvestment",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [],
+          name: "LaunchpadStarted",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "owner",
+              type: "address",
+            },
+          ],
+          name: "OwnerRedeemsProject",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
               name: "previousOwner",
               type: "address",
             },
@@ -52,6 +122,25 @@ const deployedContracts = {
             },
           ],
           name: "OwnershipTransferred",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "investors",
+              type: "uint256",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "candidates",
+              type: "uint256",
+            },
+          ],
+          name: "WinnersChosen",
           type: "event",
         },
         {
@@ -68,6 +157,19 @@ const deployedContracts = {
             {
               internalType: "uint256",
               name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "getCandidatesCount",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "candidatesNumber",
               type: "uint256",
             },
           ],

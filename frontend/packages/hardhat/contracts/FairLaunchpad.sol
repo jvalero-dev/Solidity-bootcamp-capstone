@@ -165,7 +165,7 @@ contract FairLaunchpad is Ownable {
 
 			require(
 				payable(msg.sender).send(investorsCount * investmentAmount),
-				"Refund failed"
+				"Refund failed."
 			);
 		}
 
