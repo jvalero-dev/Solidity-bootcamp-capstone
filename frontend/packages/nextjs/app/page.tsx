@@ -170,6 +170,7 @@ const Home: NextPage = () => {
                   tokenSymbol={tokenSymbol}
                   launchpadOpen={launchpadOpen}
                   setLaunchpadOpen={setLaunchpadOpen}
+                  winnersChosen={winnersChosen}
                 />
               </div>
             </div>

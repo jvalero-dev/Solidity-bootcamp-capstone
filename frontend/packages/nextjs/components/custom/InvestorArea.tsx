@@ -24,7 +24,7 @@ export function InvestorArea(params: {
   const [tokenBalance, setTokenBalance] = useState(BigInt(0));
   const [isInvestor, setIsInvestor] = useState(false);
   const [isChosen, setIsChosen] = useState(false);
-  const [eventInvestedHash, setEventInvestedHash] = useState("");
+  const [eventHash, setEventHash] = useState("");
 
   const {
     data: investmentAmount,
@@ -79,7 +79,7 @@ export function InvestorArea(params: {
     onLogs(logs: any) {
       console.log("New investor onboard!", logs[0]);
       if ((logs[0].args.investor as `0x${string}`) == params.address) {
-        setEventInvestedHash(logs[0].blockHash);
+        setEventHash(logs[0].blockHash);
       }
     },
   });
@@ -92,7 +92,7 @@ export function InvestorArea(params: {
       console.log("Investor tokens claimed!", logs[0]);
       if ((logs[0].args.investor as `0x${string}`) == params.address) {
         setStatus(`${formatEther(logs[0].args.amount)} Tokens claimed`);
-        setEventInvestedHash(logs[0].blockHash);
+        setEventHash(logs[0].blockHash);
       }
     },
   });
@@ -105,8 +105,17 @@ export function InvestorArea(params: {
       console.log("Investor recovered investment!", logs[0]);
       if ((logs[0].args.investor as `0x${string}`) == params.address) {
         setStatus(`${formatEther(logs[0].args.investmentAmount)} ETH returned to user`);
-        setEventInvestedHash(logs[0].blockHash);
+        setEventHash(logs[0].blockHash);
       }
+    },
+  });
+
+  useWatchContractEvent({
+    address: process.env.NEXT_PUBLIC_FAIR_LAUNCHPAD_CONTRACT,
+    abi,
+    eventName: "OwnerRedeemsProject",
+    onLogs(logs: any) {
+      setEventHash(logs[0].blockHash);
     },
   });
 
@@ -191,7 +200,7 @@ export function InvestorArea(params: {
     refetchTokenBalance().then(({ data: balance }) => {
       setTokenBalance(balance as bigint);
     });
-  }, [params.address, eventInvestedHash]);
+  }, [params.address, eventHash]);
 
   useEffect(() => {
     refetchIsChosen().then(({ data: isChosen }) => {
